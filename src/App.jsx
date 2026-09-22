@@ -10,6 +10,8 @@ import SaveUserModal from './components/SaveUserModal'
  
 import './styles.css'
 
+const URL="https://hppfprgzvbaxnozyfcxu.supabase.co/rest/v1/users"
+const APIKEY='sb_publishable_ypXg8cJQA6hVXmPQ8ZheyQ_Ka2TEnsb'
 function App() {
   const [users,setUsers]=useState([])
  const [showSaveUserModal,setShowUserModal]=useState(false)
@@ -21,7 +23,7 @@ function App() {
     })
     .then(res=>res.json())
     .then(data=>setUsers(data))
-    .catch(err=>console.error('Error fatching',err))
+    .catch(err=>console.error('Error fetching',err))
   },[])
   const addUserHandler=()=>{
     setShowUserModal(true)
@@ -30,7 +32,18 @@ function App() {
     setShowUserModal(false)
 
   }
-    
+  const submitUserHandler=(user)=>{
+     fetch(URL,{
+      method:'post',
+      headers:{
+        'Content-Type':'application/json',
+        'APIKEY':APIKEY
+      },
+      body:JSON.stringify(user)
+     })
+       
+      .catch(err=>alert(err.message))
+  }  
 
   return (
     <>
@@ -48,7 +61,7 @@ function App() {
       {/* <!-- New user button  --> */}
       <button className="btn-add btn" onClick={addUserHandler}>Add new user</button>
 
-      {showSaveUserModal&&<SaveUserModal onClose={addUserCloseHandler}/>}
+      {showSaveUserModal&&<SaveUserModal onClose={addUserCloseHandler} onSubmit={submitUserHandler}/>}
       {/* <!-- Pagination component  --> */}
       <Pagination/>
     </section>
