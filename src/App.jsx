@@ -6,12 +6,13 @@ import Header from './components/Header'
 import Pagination from './components/Pagination'
 import UserList from './components/UserList'
 import UserSearch from './components/UserSearch'
+import SaveUserModal from './components/SaveUserModal'
  
 import './styles.css'
 
 function App() {
   const [users,setUsers]=useState([])
-console.log(users)
+ const [showSaveUserModal,setShowUserModal]=useState(false)
   useEffect(()=>{
     fetch('https://hppfprgzvbaxnozyfcxu.supabase.co/rest/v1/users',{
       headers:{
@@ -22,6 +23,9 @@ console.log(users)
     .then(data=>setUsers(data))
     .catch(err=>console.error('Error fatching',err))
   },[])
+  const addUserHandler=()=>{
+    setShowUserModal(true)
+  }
     
 
   return (
@@ -38,8 +42,9 @@ console.log(users)
      <UserList users={users}/>
 
       {/* <!-- New user button  --> */}
-      <button className="btn-add btn">Add new user</button>
+      <button className="btn-add btn" onClick={addUserHandler}>Add new user</button>
 
+      {showSaveUserModal&&<SaveUserModal/>}
       {/* <!-- Pagination component  --> */}
       <Pagination/>
     </section>
