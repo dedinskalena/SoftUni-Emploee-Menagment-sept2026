@@ -43,6 +43,7 @@ function App() {
      })
        
       .catch(err=>alert(err.message))
+      .finally(()=>setShowUserModal(false))
   }  
 
   return (
