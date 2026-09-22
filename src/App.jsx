@@ -1,5 +1,6 @@
  
  
+import { useEffect, useState } from 'react'
 import Footer from './components/Footer'
 import Header from './components/Header'
 import Pagination from './components/Pagination'
@@ -9,7 +10,19 @@ import UserSearch from './components/UserSearch'
 import './styles.css'
 
 function App() {
-  
+  const [users,setUsers]=useState([])
+console.log(users)
+  useEffect(()=>{
+    fetch('https://hppfprgzvbaxnozyfcxu.supabase.co/rest/v1/users',{
+      headers:{
+        'APIKEY':'sb_publishable_ypXg8cJQA6hVXmPQ8ZheyQ_Ka2TEnsb'
+      }
+    })
+    .then(res=>res.json())
+    .then(data=>setUsers(data))
+    .catch(err=>console.error('Error fatching',err))
+  },[])
+    
 
   return (
     <>
@@ -22,7 +35,7 @@ function App() {
       <UserSearch/>
 
       {/* <!-- Table component --> */}
-     <UserList/>
+     <UserList users={users}/>
 
       {/* <!-- New user button  --> */}
       <button className="btn-add btn">Add new user</button>
