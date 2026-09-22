@@ -13,18 +13,16 @@ import './styles.css'
 const URL="https://hppfprgzvbaxnozyfcxu.supabase.co/rest/v1/users"
 const APIKEY='sb_publishable_ypXg8cJQA6hVXmPQ8ZheyQ_Ka2TEnsb'
 function App() {
-  const [users,setUsers]=useState([])
+ const [users,setUsers]=useState([])
  const [showSaveUserModal,setShowUserModal]=useState(false)
   useEffect(()=>{
-    fetch('https://hppfprgzvbaxnozyfcxu.supabase.co/rest/v1/users',{
-      headers:{
-        'APIKEY':'sb_publishable_ypXg8cJQA6hVXmPQ8ZheyQ_Ka2TEnsb'
-      }
-    })
-    .then(res=>res.json())
+     fetchUsers()
+     
     .then(data=>setUsers(data))
     .catch(err=>console.error('Error fetching',err))
   },[])
+
+  
   const addUserHandler=()=>{
     setShowUserModal(true)
   }
@@ -32,8 +30,9 @@ function App() {
     setShowUserModal(false)
 
   }
-  const submitUserHandler=(user)=>{
-     fetch(URL,{
+  const submitUserHandler=async (user)=>{
+    try{
+     await fetch(URL,{
       method:'post',
       headers:{
         'Content-Type':'application/json',
@@ -41,9 +40,17 @@ function App() {
       },
       body:JSON.stringify(user)
      })
-       
-      .catch(err=>alert(err.message))
-      .finally(()=>setShowUserModal(false))
+     const updatedUsers=await fetchUsers()
+     setUsers(updatedUsers)
+    }catch(err){
+      alert(err.message)
+
+}finally{
+
+  setShowUserModal(false)
+}
+  
+
   }  
 
   return (
@@ -84,5 +91,17 @@ function App() {
     </>
   )
 }
+
+async function fetchUsers (){
+    const res=await fetch('https://hppfprgzvbaxnozyfcxu.supabase.co/rest/v1/users',{
+      headers:{
+        'APIKEY':'sb_publishable_ypXg8cJQA6hVXmPQ8ZheyQ_Ka2TEnsb'
+      }
+    })
+    const data=await res.json()
+    return data
+  }
+
+
 
 export default App
