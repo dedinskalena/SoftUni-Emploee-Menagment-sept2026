@@ -1,4 +1,31 @@
-export default function UserDetails() {
+import { useEffect, useState } from "react";
+import { fromIsoDate } from "../utils/DateTimeUtil";
+
+const URL="https://hppfprgzvbaxnozyfcxu.supabase.co/rest/v1/users"
+const APIKEY='sb_publishable_ypXg8cJQA6hVXmPQ8ZheyQ_Ka2TEnsb'
+
+
+export default function UserDetails({
+  userId,
+
+}) {
+  const [user,setUser]=useState({})
+  console.log(user)
+
+  useEffect(()=>{
+    fetch(`${URL}?id=eq.${userId}`,
+      {
+        headers:{
+          'Content-Type':'application/json',
+          'APIKEY':APIKEY
+        }
+      }
+    )
+    .then(res=>res.json())
+    .then(data=>setUser(data[0]))
+    .catch(err=>console.log(err.message))
+  },[userId])
+
    return(
         <div className="overlay">
       <div className="backdrop"></div>
@@ -17,24 +44,24 @@ export default function UserDetails() {
           </header>
           <div className="content">
             <div className="image-container">
-              <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" alt=""
+              <img src={user.imageUrl}  alt={user.firstName}
                 className="image" />
             </div>
             <div className="user-details">
-              <p>User Id: <strong>62bb0c0eda039e2fdccba57b</strong></p>
+              <p>User Id: <strong>{user.id}</strong></p>
               <p>
                 Full Name:
-                <strong> Peter Johnson </strong>
+                <strong>{user.firstName} {user.lastName} </strong>
               </p>
-              <p>Email: <strong>peter@abv.bg</strong></p>
-              <p>Phone Number: <strong>0812345678</strong></p>
+              <p>Email: <strong>{user.email}</strong></p>
+              <p>Phone Number: <strong>{user.phoneNumber}</strong></p>
               <p>
                 Address:
-                <strong> Bulgaria, Sofia, Aleksandar Malinov 78 </strong>
+                <strong>{user.address?.country}, {user.address?.country}, {user.address?.city}, {user.address?.street} {user.address?.streetNumber}</strong>
               </p>
 
-              <p>Created on: <strong>Wednesday, June 28, 2022</strong></p>
-              <p>Modified on: <strong>Thursday, June 29, 2022</strong></p>
+              <p>Created on: <strong> {fromIsoDate(user.createdAt)}</strong></p>
+              <p>Modified on: <strong> {fromIsoDate(user.updatedAt)}</strong></p>
             </div>
           </div>
         </div>

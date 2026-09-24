@@ -1,9 +1,17 @@
+import { useState } from "react";
+import UserDetails from "./UserDetails";
 import UserListItem from "./UserListItem";
 
 
 export default function UserList({
   users,
 }) {
+  const [showUserDetails,setShowUserDetails]=useState(false)
+  const [selectedUserId,setSelectedUserId]=useState(null)
+  const showUserDetailsHandler=(userId)=>{
+    setSelectedUserId(userId)
+    setShowUserDetails(true)
+  }
    return(
           <div className="table-wrapper">
           
@@ -65,9 +73,16 @@ export default function UserList({
           </thead>
           <tbody>
             {/* <!-- Table row component --> */}
-           { users.map(user => <UserListItem key= {user.id} {...user}/>)}
+           { users.map(user =>
+             (<UserListItem 
+             key= {user.id} 
+             {...user} 
+             onInfo={showUserDetailsHandler}
+            />
+              ))}
           </tbody>
         </table>
+        {showUserDetails&&<UserDetails userId={selectedUserId}/>}
       </div>
    );
 }
