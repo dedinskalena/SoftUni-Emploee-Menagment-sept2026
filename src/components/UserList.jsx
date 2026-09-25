@@ -1,24 +1,59 @@
 import { useState } from "react";
 import UserDetails from "./UserDetails";
 import UserListItem from "./UserListItem";
+import UserDeleteModal from "./UserDeleteModal"
+import Spinner from "./Spinner"
 
+const URL="https://hppfprgzvbaxnozyfcxu.supabase.co/rest/v1/users"
+const APIKEY='sb_publishable_ypXg8cJQA6hVXmPQ8ZheyQ_Ka2TEnsb'
 
 export default function UserList({
   users,
+  onUsersUpdate
 }) {
   const [showUserDetails,setShowUserDetails]=useState(false)
   const [selectedUserId,setSelectedUserId]=useState(null)
+  const [showUserDelete,setShowUserDelete]=useState(false)
+
+
   const showUserDetailsHandler=(userId)=>{
     setSelectedUserId(userId)
     setShowUserDetails(true)
   }
-  const hideUserDetailsHandler=()=>{
+  const showUserDeleteHandler=(userId)=>{
+    setSelectedUserId(userId)
+    setShowUserDelete(true)
+  }
+  const hideUserModalHandler=()=>{
     setShowUserDetails(false)
+    setShowUserDelete(false)
+
     setSelectedUserId(null)
+  }
+
+  const deleteUserHandler=async ()=>{
+    try{
+
+      await fetch(`${URL}?id=eq.${selectedUserId}`,{
+        method:'DELETE',
+        headers:{
+            'APIKEY':APIKEY
+        }
+      })
+     onUsersUpdate()
+
+
+    }catch(err){
+      console.error('Failed to delete user:',err)
+    }finally{
+      hideUserModalHandler()
+      
+    }
+      
   }
    return(
           <div className="table-wrapper">
-          
+          {users.length===0&&<Spinner/>}
 
         <table className="table">
           <thead>
@@ -76,17 +111,21 @@ export default function UserList({
             </tr>
           </thead>
           <tbody>
+          
             {/* <!-- Table row component --> */}
            { users.map(user =>
              (<UserListItem 
              key= {user.id} 
              {...user} 
              onInfo={showUserDetailsHandler}
+             onDelete={showUserDeleteHandler}
             />
               ))}
           </tbody>
         </table>
-        {showUserDetails&&<UserDetails userId={selectedUserId} onClose={hideUserDetailsHandler}/>}
+        {showUserDetails&&<UserDetails userId={selectedUserId} onClose={hideUserModalHandler}/>}
+        {showUserDelete&&<UserDeleteModal userId={selectedUserId} onClose={hideUserModalHandler} onDelete={deleteUserHandler}/>}
+
       </div>
    );
-}
+} 

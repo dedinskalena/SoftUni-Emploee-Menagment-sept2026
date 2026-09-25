@@ -7,7 +7,8 @@ import Pagination from './components/Pagination'
 import UserList from './components/UserList'
 import UserSearch from './components/UserSearch'
 import SaveUserModal from './components/SaveUserModal'
- 
+import {fetchUsers} from "./api/usersApi" 
+
 import './styles.css'
 
 const URL="https://hppfprgzvbaxnozyfcxu.supabase.co/rest/v1/users"
@@ -52,6 +53,16 @@ function App() {
   
 
   }  
+  const usersUpdateHandler=async ()=>{
+    try{
+      const updatedUsers=await fetchUsers();
+      setUsers(updatedUsers)
+
+    }catch(err){
+      console.log('Error updating users',err)
+    }
+  }
+  
 
   return (
     <>
@@ -64,7 +75,7 @@ function App() {
       <UserSearch/>
 
       {/* <!-- Table component --> */}
-     <UserList users={users}/>
+     <UserList users={users} onUsersUpdate={usersUpdateHandler}/>
 
       {/* <!-- New user button  --> */}
       <button className="btn-add btn" onClick={addUserHandler}>Add new user</button>
@@ -92,15 +103,7 @@ function App() {
   )
 }
 
-async function fetchUsers (){
-    const res=await fetch('https://hppfprgzvbaxnozyfcxu.supabase.co/rest/v1/users',{
-      headers:{
-        'APIKEY':'sb_publishable_ypXg8cJQA6hVXmPQ8ZheyQ_Ka2TEnsb'
-      }
-    })
-    const data=await res.json()
-    return data
-  }
+ 
 
 
 
