@@ -3,6 +3,7 @@ import UserDetails from "./UserDetails";
 import UserListItem from "./UserListItem";
 import UserDeleteModal from "./UserDeleteModal"
 import Spinner from "./Spinner"
+import SaveUserModal from "./SaveUserModal";
 
 const URL="https://hppfprgzvbaxnozyfcxu.supabase.co/rest/v1/users"
 const APIKEY='sb_publishable_ypXg8cJQA6hVXmPQ8ZheyQ_Ka2TEnsb'
@@ -14,7 +15,8 @@ export default function UserList({
   const [showUserDetails,setShowUserDetails]=useState(false)
   const [selectedUserId,setSelectedUserId]=useState(null)
   const [showUserDelete,setShowUserDelete]=useState(false)
-
+  const [showUserEdit,setShowUserEdit]=useState(false)
+ 
 
   const showUserDetailsHandler=(userId)=>{
     setSelectedUserId(userId)
@@ -27,6 +29,7 @@ export default function UserList({
   const hideUserModalHandler=()=>{
     setShowUserDetails(false)
     setShowUserDelete(false)
+    setShowUserEdit(false)
 
     setSelectedUserId(null)
   }
@@ -48,8 +51,11 @@ export default function UserList({
     }finally{
       hideUserModalHandler()
       
-    }
-      
+    } 
+  }
+  const showUserEditHandler=(userId)=>{
+      setSelectedUserId(userId)
+      setShowUserEdit(true)
   }
    return(
           <div className="table-wrapper">
@@ -119,13 +125,15 @@ export default function UserList({
              {...user} 
              onInfo={showUserDetailsHandler}
              onDelete={showUserDeleteHandler}
+             onEdit={showUserEditHandler}
             />
               ))}
           </tbody>
         </table>
         {showUserDetails&&<UserDetails userId={selectedUserId} onClose={hideUserModalHandler}/>}
         {showUserDelete&&<UserDeleteModal userId={selectedUserId} onClose={hideUserModalHandler} onDelete={deleteUserHandler}/>}
-
+        {showUserEdit&&<SaveUserModal userEdit={showUserEdit} userId={selectedUserId} onClose={hideUserModalHandler}  />}
+        
       </div>
    );
 } 

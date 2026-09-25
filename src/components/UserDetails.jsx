@@ -10,7 +10,7 @@ export default function UserDetails({
   onClose
 }) {
   const [user,setUser]=useState({})
-  console.log(user)
+  
 
   useEffect(()=>{
     fetch(`${URL}?id=eq.${userId}`,
